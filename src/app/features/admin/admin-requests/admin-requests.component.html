@@ -1,0 +1,131 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Gestion des demandes</h1>
+      <p class="page-sub">{{ req.pendingCount() }} demande(s) en attente de validation</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    @for (tab of tabs; track tab.value) {
+      <button class="tab-btn" [class.active]="filterTab() === tab.value" (click)="filterTab.set(tab.value)">
+        {{ tab.label }}
+        <span class="tab-count" [class.tab-count-danger]="tab.value === 'pending'">{{ tab.count() }}</span>
+      </button>
+    }
+  </div>
+
+  <!-- List -->
+  <div class="requests-list">
+    @for (r of filteredRequests(); track r.id) {
+      <div class="request-card" [class.card-pending]="r.status === 'pending'">
+        <div class="req-top">
+          <div class="req-left">
+            <span class="req-cat-icon">{{ catIcon(r.category) }}</span>
+            <div>
+              <div class="req-cat">{{ catLabel(r.category) }}</div>
+              <div class="req-emp">
+                <span class="emp-avatar-xs">{{ employeeName(r.employeeId)[0] }}</span>
+                {{ employeeName(r.employeeId) }} · {{ employeeDept(r.employeeId) }}
+              </div>
+            </div>
+          </div>
+          <div class="req-right">
+            <app-badge [variant]="r.status" [label]="statusLabel(r.status)" />
+            <span class="req-date">{{ r.requestDate }}</span>
+          </div>
+        </div>
+
+        <div class="req-body">
+          <div class="req-field">
+            <span class="field-label">Description</span>
+            <span>{{ r.description }}</span>
+          </div>
+          <div class="req-field">
+            <span class="field-label">Justification</span>
+            <span class="text-muted">{{ r.justification }}</span>
+          </div>
+          @if (r.adminNote) {
+            <div class="req-field">
+              <span class="field-label">Note admin</span>
+              <span class="admin-note">{{ r.adminNote }}</span>
+            </div>
+          }
+        </div>
+
+        @if (r.status === 'pending') {
+          <div class="req-actions">
+            <button class="btn btn-success" (click)="openApproveModal(r)">✅ Approuver</button>
+            <button class="btn btn-danger"  (click)="openRejectModal(r)">❌ Refuser</button>
+          </div>
+        }
+      </div>
+    } @empty {
+      <div class="empty-state-card">
+        <p>Aucune demande dans cette catégorie</p>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Approve Modal -->
+@if (showApproveModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Approuver la demande</h2>
+        <button class="modal-close" (click)="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="approve-info">
+          <p><strong>Employé :</strong> {{ employeeName(targetRequest()?.employeeId ?? '') }}</p>
+          <p><strong>Catégorie :</strong> {{ catIcon(targetRequest()?.category ?? '') }} {{ catLabel(targetRequest()?.category ?? '') }}</p>
+          <p><strong>Description :</strong> {{ targetRequest()?.description }}</p>
+        </div>
+        <div class="form-group">
+          <label>Assigner un équipement disponible *</label>
+          <select class="form-control" [(ngModel)]="approveEquipmentId">
+            <option value="">-- Sélectionner --</option>
+            @for (item of compatibleEquipments(); track item.id) {
+              <option [value]="item.id">{{ item.name }} ({{ item.serialNumber }})</option>
+            }
+          </select>
+          @if (compatibleEquipments().length === 0) {
+            <p class="no-equipment-warn">⚠️ Aucun équipement disponible dans cette catégorie</p>
+          }
+        </div>
+        <div class="form-group">
+          <label>Note (optionnel)</label>
+          <textarea class="form-control" [(ngModel)]="approveNote" rows="2" placeholder="Note pour l'employé..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" (click)="closeModal()">Annuler</button>
+        <button class="btn btn-success" (click)="confirmApprove()" [disabled]="!approveEquipmentId">Confirmer l'approbation</button>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- Reject Modal -->
+@if (showRejectModal()) {
+  <div class="modal-backdrop" (click)="closeModal()">
+    <div class="modal modal-sm" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Refuser la demande</h2>
+        <button class="modal-close" (click)="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Motif du refus *</label>
+          <textarea class="form-control" [(ngModel)]="rejectNote" rows="3" placeholder="Expliquez le motif du refus..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" (click)="closeModal()">Annuler</button>
+        <button class="btn btn-danger" (click)="confirmReject()" [disabled]="!rejectNote.trim()">Confirmer le refus</button>
+      </div>
+    </div>
+  </div>
+}

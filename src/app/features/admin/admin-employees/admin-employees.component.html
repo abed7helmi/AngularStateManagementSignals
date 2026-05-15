@@ -1,0 +1,107 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Employés 2</h1>
+      <p class="page-sub">{{ employees().length }} employés — cliquez pour voir le détail</p>
+    </div>
+  </div>
+
+  <div class="employee-grid">
+    @for (emp of employees(); track emp.id) {
+      <div class="emp-card" (click)="selectEmployee(emp)" [class.selected]="selectedEmployee()?.id === emp.id">
+        <div class="emp-card-header">
+          <div class="emp-avatar">{{ emp.name[0] }}</div>
+          <div>
+            <p class="emp-name">{{ emp.name }}</p>
+            <p class="emp-meta">{{ emp.position }}</p>
+            <p class="emp-dept">{{ emp.department }}</p>
+          </div>
+        </div>
+        <div class="emp-stats">
+          <div class="emp-stat">
+            <span class="emp-stat-val">{{ equipmentCount(emp.id) }}</span>
+            <span class="emp-stat-label">équipements</span>
+          </div>
+          <div class="emp-stat">
+            <span class="emp-stat-val">{{ pendingCount(emp.id) }}</span>
+            <span class="emp-stat-label">en attente</span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Employee detail panel -->
+  @if (selectedEmployee(); as emp) {
+    <div class="detail-panel">
+      <div class="detail-header">
+        <div class="detail-title">
+          <div class="detail-avatar">{{ emp.name[0] }}</div>
+          <div>
+            <h2>{{ emp.name }}</h2>
+            <p>{{ emp.email }} · {{ emp.position }} · {{ emp.department }}</p>
+          </div>
+        </div>
+        <button class="close-btn" (click)="selectedEmployee.set(null)">✕ Fermer</button>
+      </div>
+
+      <div class="detail-grid">
+        <!-- Equipment -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Équipements assignés ({{ employeeEquipment().length }})</h3>
+          </div>
+          @if (employeeEquipment().length === 0) {
+            <p class="empty-state">Aucun équipement assigné</p>
+          } @else {
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr><th>Équipement</th><th>Catégorie</th><th>N° Série</th><th>Statut</th></tr>
+                </thead>
+                <tbody>
+                  @for (item of employeeEquipment(); track item.id) {
+                    <tr>
+                      <td><strong>{{ item.name }}</strong><br><small class="text-muted">{{ item.brand }}</small></td>
+                      <td>{{ catIcon(item.category) }} {{ catLabel(item.category) }}</td>
+                      <td class="mono">{{ item.serialNumber }}</td>
+                      <td><app-badge variant="assigned" label="Assigné" /></td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+
+        <!-- Requests history -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Historique des demandes ({{ employeeRequests().length }})</h3>
+          </div>
+          @if (employeeRequests().length === 0) {
+            <p class="empty-state">Aucune demande</p>
+          } @else {
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr><th>Catégorie</th><th>Description</th><th>Date</th><th>Statut</th></tr>
+                </thead>
+                <tbody>
+                  @for (r of employeeRequests(); track r.id) {
+                    <tr>
+                      <td>{{ catIcon(r.category) }} {{ catLabel(r.category) }}</td>
+                      <td>{{ r.description }}</td>
+                      <td>{{ r.requestDate }}</td>
+                      <td><app-badge [variant]="r.status" [label]="statusLabel(r.status)" /></td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

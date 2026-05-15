@@ -1,0 +1,126 @@
+<div class="page">
+  <div class="page-header">
+    <h1>Demande d'équipement 222</h1>
+    <p class="page-sub">Soumettez une demande — elle sera examinée par l'administrateur</p>
+  </div>
+
+  <div class="page-grid">
+    <!-- Request form -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Nouvelle demande</h2>
+      </div>
+      <div class="card-body">
+        @if (submitted()) {
+          <div class="success-banner">
+            <span>✅</span>
+            <div>
+              <strong>Demande soumise avec succès !</strong>
+              <p>Votre demande est en attente de validation par l'administrateur.</p>
+            </div>
+            <button class="btn btn-ghost btn-sm" (click)="resetForm()">Nouvelle demande</button>
+          </div>
+        } @else {
+          <form (ngSubmit)="submit()" class="req-form">
+            <div class="form-group">
+              <label>Type d'équipement *</label>
+              <div class="category-grid">
+                @for (cat of categories; track cat.value) {
+                  <button
+                    type="button"
+                    class="cat-option"
+                    [class.selected]="formCategory() === cat.value"
+                    (click)="formCategory.set(cat.value)"
+                  >
+                    <span class="cat-opt-icon">{{ cat.icon }}</span>
+                    <span class="cat-opt-label">{{ cat.label }}</span>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Description *</label>
+              <input
+                class="form-control"
+                [ngModel]="formDescription()"
+                (ngModelChange)="formDescription.set($event)"
+                name="description"
+                placeholder="Ex: Laptop Dell XPS 15 ou similaire"
+                maxlength="200"
+              />
+              <span class="char-count">{{ formDescription().length }}/200</span>
+            </div>
+
+            <div class="form-group">
+              <label>Justification *</label>
+              <textarea
+                class="form-control"
+                [ngModel]="formJustification()"
+                (ngModelChange)="formJustification.set($event)"
+                name="justification"
+                rows="4"
+                placeholder="Expliquez pourquoi vous avez besoin de cet équipement..."
+                maxlength="500"
+              ></textarea>
+              <span class="char-count">{{ formJustification().length }}/500</span>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-ghost" (click)="resetForm()">Réinitialiser</button>
+              <button type="submit" class="btn btn-primary" >
+                Soumettre la demande
+              </button>
+            </div>
+          </form>
+        }
+      </div>
+    </div>
+
+    <!-- My requests history -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Historique de mes demandes</h2>
+        <span class="header-count">{{ myRequests().length }}</span>
+      </div>
+
+      @if (myRequests().length === 0) {
+        <p class="empty-state">Aucune demande pour l'instant</p>
+      } @else {
+        <div class="history-list">
+          @for (r of myRequests(); track r.id) {
+            <div class="history-item" [class]="'history-' + r.status">
+              <div class="history-top">
+                <div class="history-left">
+                  <span class="hist-icon">{{ catIcon(r.category) }}</span>
+                  <div>
+                    <p class="hist-cat">{{ catLabel(r.category) }}</p>
+                    <p class="hist-desc">{{ r.description }}</p>
+                  </div>
+                </div>
+                <div class="history-right">
+                  <app-badge [variant]="r.status" [label]="statusLabel(r.status)" />
+                  @if (r.status === 'pending') {
+                    <button class="cancel-btn" (click)="cancel(r.id)" title="Annuler">✕</button>
+                  }
+                </div>
+              </div>
+              <div class="history-meta">
+                <span>Demandé le {{ r.requestDate }}</span>
+                @if (r.responseDate) {
+                  <span>· Répondu le {{ r.responseDate }}</span>
+                }
+              </div>
+              @if (r.adminNote) {
+                <div class="history-note">
+                  <span class="note-icon">💬</span>
+                  <span>{{ r.adminNote }}</span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,106 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Tableau de bord</h1>
+      <p class="page-sub">Bonjour, {{ auth.currentUser()?.name }} — Vue d'ensemble du parc informatique</p>
+    </div>
+    <span class="date-badge">{{ today }}</span>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <app-stat-card icon="📦" [value]="eq.totalCount()"       label="Total équipements"   color="#6366f1" />
+    <app-stat-card icon="✅" [value]="eq.availableCount()"   label="Disponibles"         color="#22c55e" />
+    <app-stat-card icon="📌" [value]="eq.assignedCount()"    label="Assignés"            color="#3b82f6" />
+    <app-stat-card icon="🔧" [value]="eq.maintenanceCount()" label="En maintenance"      color="#f59e0b" />
+    <app-stat-card icon="📋" [value]="req.pendingCount()"    label="Demandes en attente" color="#ef4444" />
+    <app-stat-card icon="👥" [value]="employeeCount()"       label="Employés"            color="#8b5cf6" />
+  </div>
+
+  <div class="grid-2">
+    <!-- Pending requests -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Demandes en attente</h2>
+        <a routerLink="/admin/requests" class="link-more">Voir tout →</a>
+      </div>
+      <div class="card-body">
+        @if (req.pending().length === 0) {
+          <p class="empty-state">Aucune demande en attente</p>
+        } @else {
+          <div class="request-list">
+            @for (r of req.pending().slice(0, 4); track r.id) {
+              <div class="request-item">
+                <div class="req-info">
+                  <span class="req-icon">{{ categoryIcon(r.category) }}</span>
+                  <div>
+                    <p class="req-name">{{ employeeName(r.employeeId) }}</p>
+                    <p class="req-desc">{{ categoryLabel(r.category) }} — {{ r.description }}</p>
+                  </div>
+                </div>
+                <div class="req-meta">
+                  <app-badge variant="pending" label="En attente" />
+                  <span class="req-date">{{ r.requestDate }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Equipment by category -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Parc par catégorie</h2>
+        <a routerLink="/admin/equipment" class="link-more">Gérer →</a>
+      </div>
+      <div class="card-body">
+        <div class="category-list">
+          @for (entry of categoryEntries(); track entry.cat) {
+            <div class="category-row">
+              <span class="cat-icon">{{ categoryIcon(entry.cat) }}</span>
+              <span class="cat-name">{{ categoryLabel(entry.cat) }}</span>
+              <div class="cat-bar-wrap">
+                <div class="cat-bar" [style.width.%]="(entry.count / eq.totalCount()) * 100"></div>
+              </div>
+              <span class="cat-count">{{ entry.count }}</span>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent assigned -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Équipements assignés récemment</h2>
+      <a routerLink="/admin/employees" class="link-more">Voir employés →</a>
+    </div>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Équipement</th>
+            <th>Catégorie</th>
+            <th>N° Série</th>
+            <th>Assigné à</th>
+            <th>Statut</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of eq.assigned().slice(0, 6); track item.id) {
+            <tr>
+              <td><strong>{{ item.name }}</strong></td>
+              <td>{{ categoryIcon(item.category) }} {{ categoryLabel(item.category) }}</td>
+              <td class="mono">{{ item.serialNumber }}</td>
+              <td>{{ employeeName(item.assignedTo!) }}</td>
+              <td><app-badge variant="assigned" label="Assigné" /></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

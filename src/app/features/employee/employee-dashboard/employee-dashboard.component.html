@@ -1,0 +1,87 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>Bonjour, {{ firstName() }} 👋</h1>
+      <p class="page-sub">{{ auth.currentUser()?.position }} · {{ auth.currentUser()?.department }}</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <app-stat-card icon="💻" [value]="myEquipment().length"          label="Mes équipements"        color="#6366f1" />
+    <app-stat-card icon="⏳" [value]="myPendingRequests().length"    label="Demandes en attente"    color="#f59e0b" />
+    <app-stat-card icon="✅" [value]="myApprovedRequests().length"   label="Demandes approuvées"   color="#22c55e" />
+    <app-stat-card icon="❌" [value]="myRejectedRequests().length"   label="Demandes refusées"     color="#ef4444" />
+  </div>
+
+  <div class="grid-2">
+    <!-- My Equipment -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Mes équipements</h2>
+        <a routerLink="/employee/my-equipment" class="link-more">Voir tout →</a>
+      </div>
+      <div class="card-body">
+        @if (myEquipment().length === 0) {
+          <p class="empty-state">Aucun équipement assigné.<br>
+            <a routerLink="/employee/request" class="link-action">Faire une demande →</a>
+          </p>
+        } @else {
+          <div class="eq-list">
+            @for (item of myEquipment().slice(0, 4); track item.id) {
+              <div class="eq-item">
+                <span class="eq-icon">{{ catIcon(item.category) }}</span>
+                <div class="eq-info">
+                  <p class="eq-name">{{ item.name }}</p>
+                  <p class="eq-serial">{{ item.brand }} · {{ item.serialNumber }}</p>
+                </div>
+                <app-badge variant="assigned" label="Assigné" />
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Recent Requests -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Mes demandes récentes</h2>
+        <a routerLink="/employee/request" class="link-more">Nouvelle demande →</a>
+      </div>
+      <div class="card-body">
+        @if (myRequests().length === 0) {
+          <p class="empty-state">Aucune demande<br>
+            <a routerLink="/employee/request" class="link-action">Faire ma première demande →</a>
+          </p>
+        } @else {
+          <div class="req-list">
+            @for (r of myRequests().slice(0, 4); track r.id) {
+              <div class="req-item">
+                <span class="req-cat-icon">{{ catIcon(r.category) }}</span>
+                <div class="req-info">
+                  <p class="req-name">{{ catLabel(r.category) }}</p>
+                  <p class="req-desc">{{ r.description }}</p>
+                </div>
+                <div class="req-meta">
+                  <app-badge [variant]="r.status" [label]="statusLabel(r.status)" />
+                  <span class="req-date">{{ r.requestDate }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Pending Request Alert -->
+  @if (myPendingRequests().length > 0) {
+    <div class="alert-banner">
+      <span class="alert-icon">⏳</span>
+      <div>
+        <strong>{{ myPendingRequests().length }} demande(s) en attente</strong>
+        <p>Vos demandes sont en cours d'examen par l'administrateur.</p>
+      </div>
+    </div>
+  }
+</div>

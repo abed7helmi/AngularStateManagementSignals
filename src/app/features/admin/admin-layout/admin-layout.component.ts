@@ -1,24 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SidebarComponent, NavItem } from '../../shared/sidebar.component';
-import { NotificationToastComponent } from '../../shared/notification-toast.component';
+import { SidebarComponent, NavItem } from '../../../shared/sidebar/sidebar.component';
+import { NotificationToastComponent } from '../../../shared/notification-toast/notification-toast.component';
 
 @Component({
   selector: 'app-admin-layout',
   imports: [RouterOutlet, SidebarComponent, NotificationToastComponent],
-  template: `
-    <div class="layout">
-      <app-sidebar [navItems]="navItems()" />
-      <main class="main-content">
-        <router-outlet />
-      </main>
-    </div>
-    <app-notification-toast />
-  `,
-  styles: [`
-    .layout { display: flex; min-height: 100vh; background: #f1f5f9; }
-    .main-content { flex: 1; overflow-y: auto; min-width: 0; }
-  `],
+  templateUrl: './admin-layout.component.html',
+  styleUrl: './admin-layout.component.css',
 })
 export class AdminLayoutComponent {
   readonly navItems = signal<NavItem[]>([

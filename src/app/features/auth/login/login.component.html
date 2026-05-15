@@ -1,0 +1,87 @@
+<div class="login-page">
+  <div class="login-card">
+
+    <!-- En-tête -->
+    <div class="login-header">
+      <div class="logo">🖥️</div>
+      <h1>IT Stock Manager</h1>
+      <p>Gestion du parc informatique</p>
+    </div>
+
+    <!-- Formulaire -->
+    <div class="login-body">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="login-form">
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            type="email"
+            class="form-control"
+            placeholder="prenom@company.com"
+            formControlName="email"
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input
+            id="password"
+            type="password"
+            class="form-control"
+            placeholder="••••••••"
+            formControlName="password"
+            autocomplete="current-password"
+          />
+        </div>
+
+        @if (auth.error()) {
+          <div class="error-banner">
+            ⚠️ {{ auth.error() }}
+          </div>
+        }
+
+        <button
+          type="submit"
+          class="btn-login"
+          [disabled]="form.invalid || auth.loading()"
+        >
+          @if (auth.loading()) {
+            Connexion en cours…
+          } @else {
+            Se connecter
+          }
+        </button>
+
+      </form>
+
+      <!-- Comptes de démo -->
+      <div class="demo-section">
+        <p class="demo-title">Comptes de démonstration — mot de passe : <code>password123</code></p>
+        <div class="demo-grid">
+          @for (acc of demoAccounts; track acc.email) {
+            <button
+              type="button"
+              class="demo-btn"
+              [class.demo-admin]="acc.role === 'admin'"
+              (click)="fillDemo(acc)"
+            >
+              <span class="demo-avatar" [class.demo-avatar-admin]="acc.role === 'admin'">
+                {{ acc.name[0] }}
+              </span>
+              <span class="demo-info">
+                <span class="demo-name">{{ acc.name }}</span>
+                <span class="demo-pos">{{ acc.position }}</span>
+              </span>
+              <span class="demo-badge" [class.badge-admin]="acc.role === 'admin'">
+                {{ acc.role === 'admin' ? 'Admin' : 'Employé' }}
+              </span>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,37 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">🖥️</div>
+    <div class="sidebar-brand">
+      <span class="brand-name">IT Stock</span>
+      <span class="brand-sub">{{ auth.isAdmin() ? 'Administration' : 'Espace Employé' }}</span>
+    </div>
+  </div>
+
+  <div class="sidebar-user">
+    <div class="user-avatar-sm">{{ auth.currentUser()?.name?.[0] }}</div>
+    <div class="user-details">
+      <span class="user-name-sm">{{ auth.currentUser()?.name }}</span>
+      <span class="user-dept">{{ auth.currentUser()?.department }}</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    @for (item of navItems(); track item.path) {
+      <a
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        class="nav-item"
+      >
+        <span class="nav-icon">{{ item.icon }}</span>
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="logout-btn" (click)="logout()">
+      <span>🚪</span>
+      <span>Déconnexion</span>
+    </button>
+  </div>
+</aside>

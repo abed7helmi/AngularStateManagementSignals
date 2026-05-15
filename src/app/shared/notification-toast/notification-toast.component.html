@@ -1,0 +1,8 @@
+<div class="toast-container">
+  @for (n of notif.notifications(); track n.id) {
+    <div class="toast" [ngClass]="'toast-' + n.type" (click)="notif.dismiss(n.id)">
+      <span class="toast-icon">{{ iconFor(n.type) }}</span>
+      <span>{{ n.message }}</span>
+    </div>
+  }
+</div>

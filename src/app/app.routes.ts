@@ -10,58 +10,58 @@ export const routes: Routes = [
   {
     path: 'login',
     loadComponent: () =>
-      import('./features/auth/login.component').then((m) => m.LoginComponent),
+      import('./features/auth/login/login.component').then((m) => m.LoginComponent),
   },
   {
     path: 'admin',
     loadComponent: () =>
-      import('./features/admin/admin-layout.component').then((m) => m.AdminLayoutComponent),
+      import('./features/admin/admin-layout/admin-layout.component').then((m) => m.AdminLayoutComponent),
     canActivate: [authGuard, adminGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./features/admin/admin-dashboard.component').then((m) => m.AdminDashboardComponent),
+          import('./features/admin/admin-dashboard/admin-dashboard.component').then((m) => m.AdminDashboardComponent),
       },
       {
         path: 'equipment',
         loadComponent: () =>
-          import('./features/admin/admin-equipment.component').then((m) => m.AdminEquipmentComponent),
+          import('./features/admin/admin-equipment/admin-equipment.component').then((m) => m.AdminEquipmentComponent),
       },
       {
         path: 'employees',
         loadComponent: () =>
-          import('./features/admin/admin-employees.component').then((m) => m.AdminEmployeesComponent),
+          import('./features/admin/admin-employees/admin-employees.component').then((m) => m.AdminEmployeesComponent),
       },
       {
         path: 'requests',
         loadComponent: () =>
-          import('./features/admin/admin-requests.component').then((m) => m.AdminRequestsComponent),
+          import('./features/admin/admin-requests/admin-requests.component').then((m) => m.AdminRequestsComponent),
       },
     ],
   },
   {
     path: 'employee',
     loadComponent: () =>
-      import('./features/employee/employee-layout.component').then((m) => m.EmployeeLayoutComponent),
+      import('./features/employee/employee-layout/employee-layout.component').then((m) => m.EmployeeLayoutComponent),
     canActivate: [authGuard, employeeGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./features/employee/employee-dashboard.component').then((m) => m.EmployeeDashboardComponent),
+          import('./features/employee/employee-dashboard/employee-dashboard.component').then((m) => m.EmployeeDashboardComponent),
       },
       {
         path: 'my-equipment',
         loadComponent: () =>
-          import('./features/employee/employee-my-equipment.component').then((m) => m.EmployeeMyEquipmentComponent),
+          import('./features/employee/employee-my-equipment/employee-my-equipment.component').then((m) => m.EmployeeMyEquipmentComponent),
       },
       {
         path: 'request',
         loadComponent: () =>
-          import('./features/employee/employee-request.component').then((m) => m.EmployeeRequestComponent),
+          import('./features/employee/employee-request/employee-request.component').then((m) => m.EmployeeRequestComponent),
       },
     ],
   },
