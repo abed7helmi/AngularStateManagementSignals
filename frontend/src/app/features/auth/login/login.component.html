@@ -28,9 +28,10 @@
             aria-required="true"
             [attr.aria-invalid]="form.get('email')?.invalid && form.get('email')?.touched ? 'true' : null"
             aria-describedby="email-error"
+            (blur)="onFieldBlur('email')"
           />
           @if (form.get('email')?.invalid && form.get('email')?.touched) {
-            <span id="email-error" class="field-error" role="alert">
+            <span id="email-error" class="field-error">
               @if (form.get('email')?.errors?.['required']) {
                 L'adresse email est requise.
               } @else if (form.get('email')?.errors?.['email']) {
@@ -56,16 +57,17 @@
             aria-required="true"
             [attr.aria-invalid]="form.get('password')?.invalid && form.get('password')?.touched ? 'true' : null"
             aria-describedby="password-error"
+            (blur)="onFieldBlur('password')"
           />
           @if (form.get('password')?.invalid && form.get('password')?.touched) {
-            <span id="password-error" class="field-error" role="alert">
+            <span id="password-error" class="field-error">
               Le mot de passe est requis.
             </span>
           }
         </div>
 
         @if (auth.error()) {
-          <div class="error-banner" role="alert" aria-live="assertive">
+          <div class="error-banner">
             <span aria-hidden="true">⚠️</span> {{ auth.error() }}
           </div>
         }
