@@ -33,17 +33,38 @@
 .form-group { display: flex; flex-direction: column; gap: 6px; }
 .form-group label { font-size: 0.82rem; font-weight: 600; color: #374151; }
 
+.required-marker { color: #dc2626; margin-left: 2px; }
+
 .form-control {
   padding: 11px 14px;
   border: 1.5px solid #e2e8f0;
   border-radius: 10px;
   font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, box-shadow 0.15s;
   width: 100%;
   box-sizing: border-box;
+  outline: none;
 }
-.form-control:focus { border-color: #6366f1; }
+.form-control:focus-visible {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+  outline: 2px solid #6366f1;
+  outline-offset: 1px;
+}
+.form-control[aria-invalid="true"] {
+  border-color: #dc2626;
+}
+.form-control[aria-invalid="true"]:focus-visible {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.2);
+  outline-color: #dc2626;
+}
+
+.field-error {
+  font-size: 0.78rem;
+  color: #dc2626;
+  display: block;
+}
 
 .error-banner {
   background: #fef2f2;
@@ -68,12 +89,29 @@
 }
 .btn-login:hover:not(:disabled) { opacity: 0.88; transform: translateY(-1px); }
 .btn-login:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.btn-login:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #6366f1;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 .demo-section { border-top: 1px solid #f1f5f9; padding-top: 20px; }
 
 .demo-title {
   font-size: 0.78rem;
-  color: #94a3b8;
+  color: #475569;
   text-align: center;
   margin: 0 0 12px;
 }
@@ -81,7 +119,7 @@
   background: #f1f5f9;
   padding: 1px 6px;
   border-radius: 4px;
-  color: #475569;
+  color: #334155;
   font-size: 0.78rem;
 }
 
@@ -102,6 +140,11 @@
 }
 .demo-btn:hover         { border-color: #6366f1; background: #eef2ff; }
 .demo-btn.demo-admin:hover { border-color: #7c3aed; background: #f5f3ff; }
+.demo-btn:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+}
 
 .demo-avatar {
   width: 32px; height: 32px;
@@ -116,7 +159,7 @@
 
 .demo-info { flex: 1; min-width: 0; }
 .demo-name { display: block; font-size: 0.82rem; font-weight: 600; color: #0f172a; }
-.demo-pos  { display: block; font-size: 0.72rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.demo-pos  { display: block; font-size: 0.72rem; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .demo-badge {
   font-size: 0.68rem; font-weight: 600;

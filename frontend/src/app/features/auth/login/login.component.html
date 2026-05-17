@@ -1,19 +1,22 @@
-<div class="login-page">
+<main class="login-page" aria-label="Page de connexion">
   <div class="login-card">
 
     <!-- En-tête -->
     <div class="login-header">
-      <div class="logo">🖥️</div>
+      <div class="logo" aria-hidden="true">🖥️</div>
       <h1>IT Stock Manager</h1>
       <p>Gestion du parc informatique</p>
     </div>
 
     <!-- Formulaire -->
     <div class="login-body">
-      <form [formGroup]="form" (ngSubmit)="submit()" class="login-form">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="login-form" novalidate aria-label="Formulaire de connexion">
 
         <div class="form-group">
-          <label for="email">Email</label>
+          <label for="email">
+            Email
+            <span class="required-marker" aria-hidden="true">*</span>
+          </label>
           <input
             id="email"
             type="email"
@@ -21,11 +24,27 @@
             placeholder="prenom@company.com"
             formControlName="email"
             autocomplete="email"
+            required
+            aria-required="true"
+            [attr.aria-invalid]="form.get('email')?.invalid && form.get('email')?.touched ? 'true' : null"
+            aria-describedby="email-error"
           />
+          @if (form.get('email')?.invalid && form.get('email')?.touched) {
+            <span id="email-error" class="field-error" role="alert">
+              @if (form.get('email')?.errors?.['required']) {
+                L'adresse email est requise.
+              } @else if (form.get('email')?.errors?.['email']) {
+                Veuillez saisir une adresse email valide.
+              }
+            </span>
+          }
         </div>
 
         <div class="form-group">
-          <label for="password">Mot de passe</label>
+          <label for="password">
+            Mot de passe
+            <span class="required-marker" aria-hidden="true">*</span>
+          </label>
           <input
             id="password"
             type="password"
@@ -33,12 +52,21 @@
             placeholder="••••••••"
             formControlName="password"
             autocomplete="current-password"
+            required
+            aria-required="true"
+            [attr.aria-invalid]="form.get('password')?.invalid && form.get('password')?.touched ? 'true' : null"
+            aria-describedby="password-error"
           />
+          @if (form.get('password')?.invalid && form.get('password')?.touched) {
+            <span id="password-error" class="field-error" role="alert">
+              Le mot de passe est requis.
+            </span>
+          }
         </div>
 
         @if (auth.error()) {
-          <div class="error-banner">
-            ⚠️ {{ auth.error() }}
+          <div class="error-banner" role="alert" aria-live="assertive">
+            <span aria-hidden="true">⚠️</span> {{ auth.error() }}
           </div>
         }
 
@@ -46,9 +74,11 @@
           type="submit"
           class="btn-login"
           [disabled]="form.invalid || auth.loading()"
+          [attr.aria-busy]="auth.loading() ? 'true' : null"
         >
           @if (auth.loading()) {
-            Connexion en cours…
+            <span aria-hidden="true">Connexion en cours…</span>
+            <span class="visually-hidden">Connexion en cours, veuillez patienter.</span>
           } @else {
             Se connecter
           }
@@ -57,31 +87,34 @@
       </form>
 
       <!-- Comptes de démo -->
-      <div class="demo-section">
-        <p class="demo-title">Comptes de démonstration — mot de passe : <code>password123</code></p>
-        <div class="demo-grid">
+      <section class="demo-section" aria-label="Comptes de démonstration">
+        <p class="demo-title">
+          Comptes de démonstration — mot de passe : <code>password123</code>
+        </p>
+        <div class="demo-grid" role="group" aria-label="Sélectionner un compte">
           @for (acc of demoAccounts; track acc.email) {
             <button
               type="button"
               class="demo-btn"
               [class.demo-admin]="acc.role === 'admin'"
               (click)="fillDemo(acc)"
+              [attr.aria-label]="'Connexion en tant que ' + acc.name + ', ' + acc.position"
             >
-              <span class="demo-avatar" [class.demo-avatar-admin]="acc.role === 'admin'">
+              <span class="demo-avatar" [class.demo-avatar-admin]="acc.role === 'admin'" aria-hidden="true">
                 {{ acc.name[0] }}
               </span>
               <span class="demo-info">
                 <span class="demo-name">{{ acc.name }}</span>
                 <span class="demo-pos">{{ acc.position }}</span>
               </span>
-              <span class="demo-badge" [class.badge-admin]="acc.role === 'admin'">
+              <span class="demo-badge" [class.badge-admin]="acc.role === 'admin'" aria-hidden="true">
                 {{ acc.role === 'admin' ? 'Admin' : 'Employé' }}
               </span>
             </button>
           }
         </div>
-      </div>
+      </section>
     </div>
 
   </div>
-</div>
+</main>
